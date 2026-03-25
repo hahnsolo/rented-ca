@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rented — What rent actually costs.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ─────────────────────────────────────────── */
+    :root {
+      --blue-600:   #2563EB;
+      --blue-700:   #1D4ED8;
+      --blue-50:    #EFF6FF;
+      --blue-100:   #DBEAFE;
+      --amber-500:  #F59E0B;
+      --amber-400:  #FBBF24;
+      --amber-50:   #FFFBEB;
+      --white:      #FFFFFF;
+      --slate-900:  #0F172A;
+      --slate-800:  #1E293B;
+      --slate-600:  #475569;
+      --slate-400:  #94A3B8;
+      --slate-200:  #E2E8F0;
+      --slate-100:  #F1F5F9;
+      --slate-50:   #F8FAFC;
+      --green-500:  #10B981;
+      --green-50:   #ECFDF5;
+      --radius-sm:  6px;
+      --radius-md:  10px;
+      --radius-lg:  16px;
+      --radius-xl:  24px;
+      --radius-full: 9999px;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:  0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+      --shadow-lg:  0 10px 30px rgba(0,0,0,.1);
+    }
+
+    /* ── Reset ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    input, select, textarea { font-family: inherit; }
+
+    /* ── Utilities ─────────────────────────────────────────────── */
+    .hidden { display: none !important; }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+    /* ── Nav ───────────────────────────────────────────────────── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--slate-900);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-actions { display: flex; gap: 8px; }
+    .btn-nav {
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .btn-nav-ghost {
+      color: var(--slate-600);
+    }
+    .btn-nav-ghost:hover { background: var(--slate-100); color: var(--slate-900); }
+    .btn-nav-primary {
+      background: var(--blue-600);
+      color: var(--white);
+    }
+    .btn-nav-primary:hover { background: var(--blue-700); }
+
+    /* ── Hero ──────────────────────────────────────────────────── */
+    #view-home { display: block; }
+    .hero {
+      background: linear-gradient(160deg, var(--blue-600) 0%, var(--blue-700) 100%);
+      color: var(--white);
+      padding: 64px 20px 80px;
+      text-align: center;
+    }
+    .hero-stamp {
+      margin: 0 auto 24px;
+      width: 80px;
+      height: 80px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: var(--amber-400); }
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.85;
+      max-width: 420px;
+      margin: 0 auto 32px;
+    }
+    .search-box {
+      display: flex;
+      max-width: 520px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .search-box:focus-within { border-color: var(--amber-400); }
+    .search-box input {
+      flex: 1;
+      padding: 16px 20px;
+      font-size: 1rem;
+      border: none;
+      outline: none;
+      color: var(--slate-800);
+      background: transparent;
+    }
+    .search-box input::placeholder { color: var(--slate-400); }
+    .search-box button {
+      background: var(--amber-500);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0 24px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .search-box button:hover { background: var(--amber-400); }
+    .hero-trust {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    /* ── Trust Bar ─────────────────────────────────────────────── */
+    .trust-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 16px 20px;
+    }
+    .trust-bar-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--slate-600);
+      font-weight: 500;
+    }
+    .trust-item .count { font-weight: 700; color: var(--blue-600); }
+
+    /* ── How It Works ──────────────────────────────────────────── */
+    .how-it-works {
+      padding: 56px 20px;
+    }
+    .section-label {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--blue-600);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.5px;
+      margin-bottom: 40px;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .step {
+      text-align: center;
+      padding: 28px 20px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+    }
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      background: var(--blue-50);
+      color: var(--blue-600);
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step h3 { font-size: 0.95rem; font-weight: 700; color: var(--slate-900); margin-bottom: 6px; }
+    .step p { font-size: 0.85rem; color: var(--slate-600); line-height: 1.5; }
+
+    /* ── Privacy Promise ───────────────────────────────────────── */
+    .privacy-section {
+      background: var(--blue-50);
+      border-top: 1px solid var(--blue-100);
+      border-bottom: 1px solid var(--blue-100);
+      padding: 40px 20px;
+    }
+    .privacy-inner {
+      max-width: 580px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .privacy-inner h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 20px;
+    }
+    .privacy-points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+    .privacy-points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--slate-700);
+    }
+    .privacy-points li .icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      background: var(--green-500);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    /* ── Submit CTA ────────────────────────────────────────────── */
+    .submit-cta {
+      padding: 56px 20px;
+      text-align: center;
+    }
+    .submit-cta h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .submit-cta p {
+      font-size: 0.95rem;
+      color: var(--slate-600);
+      max-width: 400px;
+      margin: 0 auto 28px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue-600);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 28px;
+      border-radius: var(--radius-full);
+      transition: all 0.15s;
+      box-shadow: var(--shadow-md);
+    }
+    .btn-primary:hover { background: var(--blue-700); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--blue-600);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--blue-100);
+      transition: all 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--blue-600); background: var(--blue-50); }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    footer {
+      background: var(--slate-900);
+      color: var(--slate-400);
+      padding: 32px 20px;
+      text-align: center;
+      font-size: 0.82rem;
+    }
+    footer .footer-logo {
+      font-weight: 800;
+      color: var(--white);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    footer a { color: var(--slate-400); }
+    footer a:hover { color: var(--white); }
+
+    /* ── Search Results View ───────────────────────────────────── */
+    #view-results { display: none; }
+    .results-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 20px;
+    }
+    .results-header-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .results-search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .results-search-row .search-input-inline {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--slate-200);
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+      color: var(--slate-800);
+    }
+    .results-search-row .search-input-inline:focus { border-color: var(--blue-600); }
+    .results-search-row .btn-search-inline {
+      background: var(--blue-600);
+      color: var(--white);
+      font-weight: 600;
+      padding: 0 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .results-search-row .btn-search-inline:hover { background: var(--blue-700); }
+    .results-meta {
+      font-size: 0.85rem;
+      color: var(--slate-600);
+    }
+    .results-meta strong { color: var(--slate-900); }
+
+    .results-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── Rent Record Card ──────────────────────────────────────── */
+    .rent-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .rent-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .card-rent {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .card-rent span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--slate-500);
+      letter-spacing: 0;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--green-50);
+      color: var(--green-500);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid #A7F3D0;
+      white-space: nowrap;
+      cursor: help;
+      position: relative;
+    }
+    .verified-badge:hover .tooltip { opacity: 1; pointer-events: auto; }
+    .tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      background: var(--slate-900);
+      color: var(--white);
+      font-size: 0.78rem;
+      font-weight: 400;
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      width: 220px;
+      line-height: 1.4;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      text-align: left;
+      z-index: 10;
+    }
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 12px;
+      border: 5px solid transparent;
+      border-top-color: var(--slate-900);
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--slate-600);
+      margin-bottom: 10px;
+    }
+    .card-meta-item { display: flex; align-items: center; gap: 5px; }
+    .card-comment {
+      font-size: 0.85rem;
+      color: var(--slate-600);
+      line-height: 1.5;
+      padding-top: 10px;
+      border-top: 1px solid var(--slate-100);
+    }
+    .card-comment::before { content: '"'; color: var(--slate-400); font-size: 1.2em; }
+    .card-comment::after { content: '"'; color: var(--slate-400); font-size: 1.2em; }
+
+    /* ── Empty State ───────────────────────────────────────────── */
+    .empty-state {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .empty-state .empty-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--slate-100);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .empty-state h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: 0.9rem;
+      color: var(--slate-600);
+      max-width: 320px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+    .results-submit-cta {
+      background: var(--amber-50);
+      border: 1px solid #FDE68A;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .results-submit-cta p {
+      font-size: 0.88rem;
+      color: var(--slate-700);
+      margin-bottom: 12px;
+    }
+    .results-submit-cta strong { color: var(--slate-900); }
+
+    /* ── Mobile ────────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .hero { padding: 48px 16px 64px; }
+      .hero h1 { font-size: 1.9rem; }
+      .search-box button { padding: 0 16px; font-size: 0.85rem; }
+      .trust-bar-inner { gap: 16px; }
+      .card-rent { font-size: 1.5rem; }
+      .steps { grid-template-columns: 1fr; }
+      .nav-logo span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" onclick="showHome(); return false;" aria-label="Rented home">
+        <!-- Stamp Logo SVG -->
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="#2563EB" stroke="#1D4ED8" stroke-width="1"/>
+          <circle cx="16" cy="16" r="12" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <text x="16" y="14" text-anchor="middle" fill="white" font-size="5.5" font-family="Inter,sans-serif" font-weight="800" letter-spacing="0.5">RENTED</text>
+          <!-- Checkmark -->
+          <path d="M11 16.5l3.5 3.5 6.5-6.5" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Rented</span>
+      </a>
+      <div class="nav-actions">
+        <button class="btn-nav btn-nav-ghost" onclick="showHome()" aria-label="Search rent data">Search</button>
+        <button class="btn-nav btn-nav-primary" onclick="showSubmit()" aria-label="Submit your rent">Submit Rent</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: HOME                                                   -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <div id="view-home">
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <!-- Big Stamp -->
+      <div class="hero-stamp" aria-hidden="true">
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="40" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Inter,sans-serif" font-weight="800" letter-spacing="2">RENTED</text>
+          <path d="M26 42l8 8 20-18" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <h1 id="hero-heading">What rent <span>actually</span> costs.</h1>
+      <p>Real verified rent data for Canadian addresses. Search before you sign.</p>
+
+      <!-- Search -->
+      <div class="search-box" role="search">
+        <label for="hero-search" class="sr-only">Enter a street address</label>
+        <input
+          id="hero-search"
+          type="text"
+          placeholder="Enter a street address..."
+          autocomplete="street-address"
+          onkeydown="if(event.key==='Enter') doSearch()"
+          aria-label="Street address search"
+        />
+        <button onclick="doSearch()" aria-label="Search">Search</button>
+      </div>
+      <p class="hero-trust">No account needed to search &nbsp;·&nbsp; Free forever</p>
+    </section>
+
+    <!-- Trust Bar -->
+    <div class="trust-bar" role="complementary" aria-label="Platform statistics">
+      <div class="trust-bar-inner">
+        <div class="trust-item">
+          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M5 8l2 2 4-4" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><span class="count">2,847</span> verified records</span>
+        </div>
+        <div class="trust-item">
+          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M8 4v4l3 2" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Lease deleted within <span class="count">7 days</span></span>
+        </div>
+        <div class="trust-item">
+          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M8 5c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0 4.5c-.83 0-1.5-.67-1.5-1.5S7.17 6.5 8 6.5s1.5.67 1.5 1.5S8.83 9.5 8 9.5z" fill="#2563EB"/></svg>
+          <span>Zero PII stored</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <section class="how-it-works container" aria-labelledby="how-heading">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title" id="how-heading">Know before you sign.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" aria-hidden="true">1</div>
+          <h3>Search an address</h3>
+          <p>Type any Canadian address. See what it actually rented for — not the asking price.</p>
+        </div>
+        <div class="step">
+          <div class="step-num" aria-hidden="true">2</div>
+          <h3>Trust the data</h3>
+          <p>Every record is confirmed against a real lease. The Verified badge means we checked.</p>
+        </div>
+        <div class="step">
+          <div class="step-num" aria-hidden="true">3</div>
+          <h3>Add your data</h3>
+          <p>Submit your rent. Your lease is deleted after verification. No account, no trail.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy Promise -->
+    <section class="privacy-section" aria-labelledby="privacy-heading">
+      <div class="privacy-inner">
+        <h2 id="privacy-heading">Privacy isn't a feature. It's the product.</h2>
+        <ul class="privacy-points" role="list">
+          <li>
+            <span class="icon" aria-hidden="true">
+              <svg width="12" height="12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            Your lease is used only to verify your rent amount — then deleted permanently within 7 days.
+          </li>
+          <li>
+            <span class="icon" aria-hidden="true">
+              <svg width="12" height="12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            Your email is used only for verification — never stored, never linked to your record.
+          </li>
+          <li>
+            <span class="icon" aria-hidden="true">
+              <svg width="12" height="12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            What we keep: rent amount, unit type, dates, and an anonymous token. Nothing else.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Submit CTA -->
+    <section class="submit-cta" aria-labelledby="cta-heading">
+      <h2 id="cta-heading">Been a tenant somewhere?</h2>
+      <p>Add your rent to help the next person searching this address. It takes under 5 minutes.</p>
+      <button class="btn-primary" onclick="showSubmit()">
+        Submit your rent
+        <svg width="16" height="16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+      <div class="footer-logo">Rented</div>
+      <p>What rent actually costs. &nbsp;·&nbsp; Canada's verified rent database.</p>
+      <p style="margin-top:8px">
+        <a href="#" onclick="return false">Privacy</a> &nbsp;·&nbsp;
+        <a href="#" onclick="return false">How it works</a> &nbsp;·&nbsp;
+        <a href="#" onclick="return false">About</a>
+      </p>
+      <p style="margin-top:16px; font-size:0.75rem; opacity:0.5">
+        PIPEDA compliant &nbsp;·&nbsp; Built in Canada &nbsp;·&nbsp; Prototype v0.1
+      </p>
+    </footer>
+
+  </div><!-- /view-home -->
+
+
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: SEARCH RESULTS                                         -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <div id="view-results">
+
+    <div class="results-header">
+      <div class="results-header-inner">
+        <div class="results-search-row" role="search">
+          <label for="results-search" class="sr-only">Refine address search</label>
+          <input
+            id="results-search"
+            class="search-input-inline"
+            type="text"
+            placeholder="Enter a street address..."
+            onkeydown="if(event.key==='Enter') doSearch(true)"
+            aria-label="Refine address search"
+          />
+          <button class="btn-search-inline" onclick="doSearch(true)" aria-label="Search">Search</button>
+        </div>
+        <p class="results-meta" id="results-meta" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="results-body" id="results-body" role="main" aria-live="polite">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <footer role="contentinfo">
+      <div class="footer-logo">Rented</div>
+      <p>What rent actually costs.</p>
+    </footer>
+
+  </div><!-- /view-results -->
+
+
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <!-- SCRIPT                                                       -->
+  <!-- ════════════════════════════════════════════════════════════ -->
+  <script>
+    // ── Sample data (prototype) ──────────────────────────────────
+    const SAMPLE_DATA = [
+      {
+        address: '123 Queen Street West',
+        city: 'Toronto',
+        province: 'ON',
+        unitType: '1 Bedroom',
+        rent: 2150,
+        leaseStart: 'Sep 2023',
+        leaseEnd: 'Aug 2024',
+        comment: 'Landlord was responsive. Heat included but parking extra. Unit was clean.',
+        token: 'Verified Tenant #2841',
+      },
+      {
+        address: '123 Queen Street West',
+        city: 'Toronto',
+        province: 'ON',
+        unitType: '1 Bedroom',
+        rent: 2050,
+        leaseStart: 'May 2022',
+        leaseEnd: 'Apr 2023',
+        comment: '',
+        token: 'Verified Tenant #1203',
+      },
+      {
+        address: '123 Queen Street West',
+        city: 'Toronto',
+        province: 'ON',
+        unitType: 'Bachelor',
+        rent: 1600,
+        leaseStart: 'Jan 2022',
+        leaseEnd: 'Dec 2022',
+        comment: 'Good location. Small unit but well laid out.',
+        token: 'Verified Tenant #0987',
+      },
+    ];
+
+    // ── Views ─────────────────────────────────────────────────────
+    function showHome() {
+      document.getElementById('view-home').style.display = 'block';
+      document.getElementById('view-results').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showResults() {
+      document.getElementById('view-home').style.display = 'none';
+      document.getElementById('view-results').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSubmit() {
+      // Placeholder — will be wired to full submit flow in next sprint
+      alert('Submit flow coming soon. This will be a 4-step form: address → unit details → lease upload → email verification.');
+    }
+
+    // ── Search ───────────────────────────────────────────────────
+    function doSearch(fromResults) {
+      const inputId = fromResults ? 'results-search' : 'hero-search';
+      const query = document.getElementById(inputId).value.trim();
+
+      if (!query) {
+        document.getElementById(inputId).focus();
+        return;
+      }
+
+      // Sync both search inputs
+      document.getElementById('hero-search').value = query;
+      document.getElementById('results-search').value = query;
+
+      showResults();
+      renderResults(query);
+    }
+
+    // ── Render ───────────────────────────────────────────────────
+    function renderResults(query) {
+      const body = document.getElementById('results-body');
+      const meta = document.getElementById('results-meta');
+
+      // Filter sample data by address match (case-insensitive)
+      const matches = SAMPLE_DATA.filter(r =>
+        r.address.toLowerCase().includes(query.toLowerCase()) ||
+        query.toLowerCase().includes(r.address.toLowerCase().split(' ')[1])
+      );
+
+      if (matches.length === 0) {
+        meta.innerHTML = `Searching for <strong>"${escHtml(query)}"</strong>`;
+        body.innerHTML = renderEmpty(query);
+        return;
+      }
+
+      const avgRent = Math.round(matches.reduce((sum, r) => sum + r.rent, 0) / matches.length);
+      meta.innerHTML = `<strong>${matches.length} verified record${matches.length !== 1 ? 's' : ''}</strong> found near <strong>"${escHtml(query)}"</strong> &nbsp;·&nbsp; avg. <strong>$${avgRent.toLocaleString()}/mo</strong>`;
+
+      body.innerHTML = matches.map(renderCard).join('') + renderSubmitNudge(query);
+    }
+
+    function renderCard(r) {
+      const comment = r.comment
+        ? `<p class="card-comment">${escHtml(r.comment)}</p>`
+        : '';
+      const endDate = r.leaseEnd ? ` – ${r.leaseEnd}` : ' – present';
+      return `
+        <article class="rent-card" aria-label="Rent record: ${escHtml(r.unitType)} at ${escHtml(r.address)}">
+          <div class="card-top">
+            <div>
+              <div class="card-rent">$${r.rent.toLocaleString()}<span>/mo</span></div>
+            </div>
+            <div class="verified-badge" tabindex="0" role="tooltip" aria-label="Verified: lease confirmed and deleted after review">
+              <svg width="10" height="10" fill="none" aria-hidden="true"><path d="M1.5 5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Verified
+              <span class="tooltip" role="tooltip">We confirmed this rent with a real lease. The lease was permanently deleted after verification.</span>
+            </div>
+          </div>
+          <div class="card-meta" aria-label="Record details">
+            <span class="card-meta-item">
+              <svg width="14" height="14" fill="none" aria-hidden="true"><rect x="1" y="3" width="12" height="10" rx="2" stroke="#94A3B8" stroke-width="1.3"/><path d="M5 1v2M9 1v2M1 7h12" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round"/></svg>
+              ${escHtml(r.leaseStart)}${endDate}
+            </span>
+            <span class="card-meta-item">
+              <svg width="14" height="14" fill="none" aria-hidden="true"><path d="M7 1C4.24 1 2 3.24 2 6c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 6a1.5 1.5 0 012 1.5z" fill="#94A3B8"/></svg>
+              ${escHtml(r.address)}, ${escHtml(r.city)}
+            </span>
+            <span class="card-meta-item">
+              <svg width="14" height="14" fill="none" aria-hidden="true"><rect x="2" y="2" width="10" height="10" rx="2" stroke="#94A3B8" stroke-width="1.3"/><path d="M5 6h4M5 8.5h2" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round"/></svg>
+              ${escHtml(r.unitType)}
+            </span>
+          </div>
+          ${comment}
+        </article>
+      `;
+    }
+
+    function renderEmpty(query) {
+      return `
+        <div class="empty-state" role="status">
+          <div class="empty-icon" aria-hidden="true">
+            <svg width="28" height="28" fill="none"><path d="M14 4C8.48 4 4 8.48 4 14s4.48 10 10 10 10-4.48 10-10S19.52 4 14 4zm1 15h-2v-2h2v2zm0-4h-2V9h2v6z" fill="#94A3B8"/></svg>
+          </div>
+          <h3>No records yet for this address</h3>
+          <p>We searched for <strong>"${escHtml(query)}"</strong> and found no verified rent records. Be the first to add one.</p>
+          <button class="btn-primary" onclick="showSubmit()" aria-label="Submit rent for this address">
+            Submit rent for this address
+          </button>
+        </div>
+        ${renderSubmitNudge(query)}
+      `;
+    }
+
+    function renderSubmitNudge(query) {
+      return `
+        <div class="results-submit-cta" role="complementary" aria-label="Help others by submitting your rent">
+          <p>📬 <strong>Rented here before?</strong> Help the next tenant — your data is verified, then your identity is gone.</p>
+          <button class="btn-secondary" onclick="showSubmit()">
+            Add your rent
+            <svg width="14" height="14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      `;
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+
+</body>
+</html>
