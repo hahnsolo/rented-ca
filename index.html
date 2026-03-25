@@ -493,6 +493,94 @@
     .card-comment::before { content: '"'; color: var(--slate-400); font-size: 1.2em; }
     .card-comment::after { content: '"'; color: var(--slate-400); font-size: 1.2em; }
 
+    /* ── Property Intel Card ──────────────────────────────────── */
+    .property-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-left: 3px solid var(--amber-500);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .property-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .property-card-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--slate-600);
+    }
+    .property-card-disclaimer {
+      font-size: 0.7rem;
+      color: var(--slate-400);
+      font-style: italic;
+    }
+    .property-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .property-stat { display: flex; flex-direction: column; gap: 3px; }
+    .property-stat-label {
+      font-size: 0.68rem;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .property-stat-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--slate-800);
+    }
+    .property-liens-label {
+      font-size: 0.68rem;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .property-lien-warning {
+      background: var(--amber-50);
+      border: 1px solid var(--amber-400);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      color: var(--slate-800);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+    .property-lien-none {
+      font-size: 0.82rem;
+      color: var(--green-500);
+      font-weight: 500;
+    }
+    .owner-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .owner-individual { background: var(--slate-100); color: var(--slate-600); }
+    .owner-corporate  { background: var(--amber-50); color: var(--slate-700); border: 1px solid var(--amber-400); }
+
     /* ── Empty State ───────────────────────────────────────────── */
     .empty-state {
       background: var(--white);
@@ -824,6 +912,101 @@
       },
     ];
 
+    // ── Property Data (mock — proptech API in future sprint) ─────
+    const PROPERTY_DATA = {
+      'cookstown': {
+        address: '35 Cookstown Road',
+        city: "St. John's",
+        province: 'NL',
+        units: 8,
+        purchaseYear: 2019,
+        purchasePrice: 680000,
+        assessedValue: 720000,
+        ownerType: 'corporate',
+        ownerLabel: 'Corporate (numbered co.)',
+        liens: [
+          { amount: 210000, type: 'Construction lien', date: 'Mar 2024' },
+        ],
+      },
+      'queen': {
+        address: '123 Queen Street West',
+        city: 'Toronto',
+        province: 'ON',
+        units: 24,
+        purchaseYear: 2018,
+        purchasePrice: 4200000,
+        assessedValue: 4800000,
+        ownerType: 'individual',
+        ownerLabel: 'Individual',
+        liens: [],
+      },
+    };
+
+    function getPropertyData(query) {
+      const q = query.toLowerCase();
+      for (const [key, prop] of Object.entries(PROPERTY_DATA)) {
+        if (q.includes(key) || prop.address.toLowerCase().includes(q)) return prop;
+      }
+      return null;
+    }
+
+    function renderBuildingCard(query) {
+      const prop = getPropertyData(query);
+      if (!prop) return '';
+
+      const carryingCost = Math.round((prop.purchasePrice * 0.065) / prop.units / 12);
+      const ownerClass  = prop.ownerType === 'corporate' ? 'owner-corporate' : 'owner-individual';
+      const ownerIcon   = prop.ownerType === 'corporate'
+        ? `<svg width="10" height="10" fill="none" aria-hidden="true"><rect x="1" y="3" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M3 3V2a2 2 0 014 0v1" stroke="currentColor" stroke-width="1.3"/></svg>`
+        : `<svg width="10" height="10" fill="none" aria-hidden="true"><circle cx="5" cy="3" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 9c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+
+      const liensHtml = prop.liens.length > 0
+        ? prop.liens.map(l => `
+          <div class="property-lien-warning">
+            <span aria-hidden="true">⚠️</span>
+            <span><strong>$${l.amount.toLocaleString()} ${escHtml(l.type)}</strong> filed ${escHtml(l.date)} — may indicate renovation activity</span>
+          </div>`).join('')
+        : `<p class="property-lien-none">✓ None on record</p>`;
+
+      return `
+        <div class="property-card" aria-label="Property data for ${escHtml(prop.address)}">
+          <div class="property-card-header">
+            <div class="property-card-label">
+              <svg width="12" height="12" fill="none" aria-hidden="true"><path d="M6 1L1 5v6h3.5V8h3v3H11V5L6 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              Property Intel
+            </div>
+            <span class="property-card-disclaimer">Prototype data · not from live registry</span>
+          </div>
+          <div class="property-stats">
+            <div class="property-stat">
+              <span class="property-stat-label">Units in building</span>
+              <span class="property-stat-value">${prop.units} units</span>
+            </div>
+            <div class="property-stat">
+              <span class="property-stat-label">Owner type</span>
+              <span class="property-stat-value"><span class="owner-badge ${ownerClass}">${ownerIcon} ${escHtml(prop.ownerLabel)}</span></span>
+            </div>
+            <div class="property-stat">
+              <span class="property-stat-label">Last purchased</span>
+              <span class="property-stat-value">${prop.purchaseYear} · $${prop.purchasePrice.toLocaleString()}</span>
+            </div>
+            <div class="property-stat">
+              <span class="property-stat-label">Assessed value</span>
+              <span class="property-stat-value">$${prop.assessedValue.toLocaleString()}</span>
+            </div>
+            <div class="property-stat">
+              <span class="property-stat-label">Est. carrying cost / unit</span>
+              <span class="property-stat-value">~$${carryingCost.toLocaleString()}/mo <span style="font-size:0.75rem;font-weight:400;color:var(--slate-400)">(interest proxy)</span></span>
+            </div>
+          </div>
+          <div>
+            <div class="property-liens-label">Outstanding liens</div>
+            ${liensHtml}
+          </div>
+        </div>
+      `;
+    }
+
     // ── Views ─────────────────────────────────────────────────────
     function showHome() {
       document.getElementById('view-home').style.display = 'block';
@@ -880,7 +1063,7 @@
       const avgRent = Math.round(matches.reduce((sum, r) => sum + r.rent, 0) / matches.length);
       meta.innerHTML = `<strong>${matches.length} verified record${matches.length !== 1 ? 's' : ''}</strong> found near <strong>"${escHtml(query)}"</strong> &nbsp;·&nbsp; avg. <strong>$${avgRent.toLocaleString()}/mo</strong>`;
 
-      body.innerHTML = matches.map(renderCard).join('') + renderSubmitNudge(query);
+      body.innerHTML = renderBuildingCard(query) + matches.map(renderCard).join('') + renderSubmitNudge(query);
     }
 
     function renderCard(r) {
