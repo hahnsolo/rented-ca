@@ -9,8 +9,8 @@
   <style>
     /* ── Design Tokens ─────────────────────────────────────────── */
     :root {
-      --blue-600:   #2563EB;
-      --blue-700:   #1D4ED8;
+      --blue-600:   #3B82F6;
+      --blue-700:   #2563EB;
       --blue-50:    #EFF6FF;
       --blue-100:   #DBEAFE;
       --amber-500:  #F59E0B;
@@ -558,13 +558,26 @@
   <nav role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
       <a href="#" class="nav-logo" onclick="showHome(); return false;" aria-label="Rented home">
-        <!-- Stamp Logo SVG -->
+        <!-- Geometric House Logo SVG -->
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="15" fill="#2563EB" stroke="#1D4ED8" stroke-width="1"/>
-          <circle cx="16" cy="16" r="12" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="3 2"/>
-          <text x="16" y="14" text-anchor="middle" fill="white" font-size="5.5" font-family="Inter,sans-serif" font-weight="800" letter-spacing="0.5">RENTED</text>
-          <!-- Checkmark -->
-          <path d="M11 16.5l3.5 3.5 6.5-6.5" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Chimney -->
+          <rect x="22" y="6" width="4" height="9" fill="#3B82F6"/>
+          <!-- Left roof face (deep navy) -->
+          <polygon points="3,15 16,3 10,15" fill="#1E3A8A"/>
+          <!-- Centre roof face (medium blue) -->
+          <polygon points="10,15 16,3 22,15" fill="#3B82F6"/>
+          <!-- Right roof face (sky blue) -->
+          <polygon points="22,15 16,3 29,15" fill="#93C5FD"/>
+          <!-- Body left fill -->
+          <rect x="5" y="15" width="10" height="14" fill="#3B82F6"/>
+          <!-- Body left diagonal dark accent -->
+          <polygon points="5,15 15,15 5,22" fill="#1E3A8A"/>
+          <!-- Body right fill -->
+          <rect x="15" y="15" width="12" height="14" fill="#60A5FA"/>
+          <!-- Body bottom-right light strip -->
+          <polygon points="15,23 27,23 27,29 15,29" fill="#BAE6FD"/>
+          <!-- Door -->
+          <rect x="13" y="23" width="6" height="6" fill="#1E3A8A"/>
         </svg>
         <span>Rented</span>
       </a>
@@ -584,11 +597,29 @@
     <section class="hero" aria-labelledby="hero-heading">
       <!-- Big Stamp -->
       <div class="hero-stamp" aria-hidden="true">
+        <!-- Geometric House (translucent on gradient bg) -->
         <svg viewBox="0 0 80 80" fill="none">
-          <circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
-          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <text x="40" y="36" text-anchor="middle" fill="white" font-size="10" font-family="Inter,sans-serif" font-weight="800" letter-spacing="2">RENTED</text>
-          <path d="M26 42l8 8 20-18" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Chimney -->
+          <rect x="54" y="14" width="10" height="24" fill="rgba(255,255,255,0.18)"/>
+          <!-- Left roof face -->
+          <polygon points="8,38 40,8 25,38" fill="rgba(255,255,255,0.32)"/>
+          <!-- Centre roof face -->
+          <polygon points="25,38 40,8 55,38" fill="rgba(255,255,255,0.22)"/>
+          <!-- Right roof face -->
+          <polygon points="55,38 40,8 72,38" fill="rgba(255,255,255,0.12)"/>
+          <!-- Body left fill -->
+          <rect x="12" y="38" width="28" height="34" fill="rgba(255,255,255,0.18)"/>
+          <!-- Body left diagonal dark accent -->
+          <polygon points="12,38 40,38 12,56" fill="rgba(0,0,0,0.1)"/>
+          <!-- Body right fill -->
+          <rect x="40" y="38" width="28" height="34" fill="rgba(255,255,255,0.1)"/>
+          <!-- Body bottom-right lighter strip -->
+          <polygon points="40,56 68,56 68,72 40,72" fill="rgba(255,255,255,0.06)"/>
+          <!-- Door -->
+          <rect x="34" y="54" width="12" height="18" fill="rgba(0,0,0,0.15)"/>
+          <!-- House outline -->
+          <polyline points="8,38 40,8 72,38" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <rect x="12" y="38" width="56" height="34" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
         </svg>
       </div>
 
@@ -615,15 +646,15 @@
     <div class="trust-bar" role="complementary" aria-label="Platform statistics">
       <div class="trust-bar-inner">
         <div class="trust-item">
-          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M5 8l2 2 4-4" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M5 8l2 2 4-4" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span><span class="count">2,847</span> verified records</span>
         </div>
         <div class="trust-item">
-          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M8 4v4l3 2" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M8 4v4l3 2" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span>Lease deleted within <span class="count">7 days</span></span>
         </div>
         <div class="trust-item">
-          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M8 5c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0 4.5c-.83 0-1.5-.67-1.5-1.5S7.17 6.5 8 6.5s1.5.67 1.5 1.5S8.83 9.5 8 9.5z" fill="#2563EB"/></svg>
+          <svg width="16" height="16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#DBEAFE"/><path d="M8 5c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0 4.5c-.83 0-1.5-.67-1.5-1.5S7.17 6.5 8 6.5s1.5.67 1.5 1.5S8.83 9.5 8 9.5z" fill="#3B82F6"/></svg>
           <span>Zero PII stored</span>
         </div>
       </div>
@@ -910,7 +941,7 @@
           <p>📬 <strong>Rented here before?</strong> Help the next tenant — your data is verified, then your identity is gone.</p>
           <button class="btn-secondary" onclick="showSubmit()">
             Add your rent
-            <svg width="14" height="14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="14" height="14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
       `;
