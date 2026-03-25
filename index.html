@@ -918,14 +918,15 @@
         address: '35 Cookstown Road',
         city: "St. John's",
         province: 'NL',
-        units: 8,
+        buildingType: 'House',
+        bedrooms: 3,
         purchaseYear: 2019,
-        purchasePrice: 680000,
-        assessedValue: 720000,
-        ownerType: 'corporate',
-        ownerLabel: 'Corporate (numbered co.)',
+        purchasePrice: 76000,
+        assessedValue: 215000,
+        ownerType: 'personal',
+        ownerLabel: 'Personal (C.Romanyk)',
         liens: [
-          { amount: 210000, type: 'Construction lien', date: 'Mar 2024' },
+          { amount: 34000, type: 'Mortgage', date: 'Dec 2021' },
         ],
       },
       'queen': {
@@ -954,7 +955,7 @@
       const prop = getPropertyData(query);
       if (!prop) return '';
 
-      const carryingCost = Math.round((prop.purchasePrice * 0.065) / prop.units / 12);
+      const carryingCost = Math.round((prop.purchasePrice * 0.065) / (prop.units || 1) / 12);
       const ownerClass  = prop.ownerType === 'corporate' ? 'owner-corporate' : 'owner-individual';
       const ownerIcon   = prop.ownerType === 'corporate'
         ? `<svg width="10" height="10" fill="none" aria-hidden="true"><rect x="1" y="3" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M3 3V2a2 2 0 014 0v1" stroke="currentColor" stroke-width="1.3"/></svg>`
@@ -964,9 +965,25 @@
         ? prop.liens.map(l => `
           <div class="property-lien-warning">
             <span aria-hidden="true">⚠️</span>
-            <span><strong>$${l.amount.toLocaleString()} ${escHtml(l.type)}</strong> filed ${escHtml(l.date)} — may indicate renovation activity</span>
+            <span><strong>$${l.amount.toLocaleString()} ${escHtml(l.type)}</strong> — ${escHtml(l.date)}</span>
           </div>`).join('')
         : `<p class="property-lien-none">✓ None on record</p>`;
+
+      const buildingTypeRow = prop.buildingType ? `
+            <div class="property-stat">
+              <span class="property-stat-label">Building type</span>
+              <span class="property-stat-value">${escHtml(prop.buildingType)}</span>
+            </div>` : '';
+
+      const bedroomsRow = prop.bedrooms ? `
+            <div class="property-stat">
+              <span class="property-stat-label">Bedrooms</span>
+              <span class="property-stat-value">${prop.bedrooms}</span>
+            </div>` : (prop.units ? `
+            <div class="property-stat">
+              <span class="property-stat-label">Units in building</span>
+              <span class="property-stat-value">${prop.units} units</span>
+            </div>` : '');
 
       return `
         <div class="property-card" aria-label="Property data for ${escHtml(prop.address)}">
@@ -978,10 +995,8 @@
             <span class="property-card-disclaimer">Prototype data · not from live registry</span>
           </div>
           <div class="property-stats">
-            <div class="property-stat">
-              <span class="property-stat-label">Units in building</span>
-              <span class="property-stat-value">${prop.units} units</span>
-            </div>
+            ${buildingTypeRow}
+            ${bedroomsRow}
             <div class="property-stat">
               <span class="property-stat-label">Owner type</span>
               <span class="property-stat-value"><span class="owner-badge ${ownerClass}">${ownerIcon} ${escHtml(prop.ownerLabel)}</span></span>
@@ -1063,7 +1078,7 @@
       const avgRent = Math.round(matches.reduce((sum, r) => sum + r.rent, 0) / matches.length);
       meta.innerHTML = `<strong>${matches.length} verified record${matches.length !== 1 ? 's' : ''}</strong> found near <strong>"${escHtml(query)}"</strong> &nbsp;·&nbsp; avg. <strong>$${avgRent.toLocaleString()}/mo</strong>`;
 
-      body.innerHTML = renderBuildingCard(query) + matches.map(renderCard).join('') + renderSubmitNudge(query);
+      body.innerHTML = matches.map(renderCard).join('') + renderBuildingCard(query) + renderSubmitNudge(query);
     }
 
     function renderCard(r) {
